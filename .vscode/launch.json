@@ -1,0 +1,11 @@
+{
+    "configurations": [
+        {
+            "type": "java",
+            "name": "CodeLens (Launch) - BiTiGramGenerator",
+            "request": "launch",
+            "mainClass": "BiTiGramGenerator",
+            "projectName": "ParallelNGramGenerator_d5d24b3a"
+        }
+    ]
+}

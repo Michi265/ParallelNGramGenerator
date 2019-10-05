@@ -20,26 +20,29 @@ public class Worker extends Thread{
 
     public void run() {
         while (master.isBookavaible()) {
-            try {
-                Integer bookId = master.dailibro();
-                File file = new File("/home/michela/IdeaProjects/ParallelNGramGenerator/src/books/www.gutenberg.org/robot/"+ bookId);
+            try{
+                Integer bookId = master.giveBookId();
+                File file = new File("/home/caste/Scrivania/ParallelNGramGenerator/books/www.gutenberg.org/robot/"+ bookId);
+                //File file = new File("/home/michela/IdeaProjects/ParallelNGramGenerator/prova/"+ bookId);
                 BufferedReader br = new BufferedReader(new FileReader(file));
                 String st;
-
-                File fileOut = new File("/home/michela/IdeaProjects/ParallelNGramGenerator/src/output");
-                FileWriter fw = new FileWriter(fileOut);
-                BufferedWriter bw = new BufferedWriter(fw);
+                ArrayList<String> ngrams2 = new ArrayList<String>();
+                ArrayList<String> ngrams3 = new ArrayList<String>();
 
                 while ((st = br.readLine()) != null) {
-                        List<String> ngrams = new ArrayList<String>();
+                    //create 2-gram
                         for (int i = 0; i < st.length() - 2 + 1; i++) {
-                            //TODO fare in modo che prima il libro venga processato per intero e poi scritto in una sola funzione gestita dal monitor
-                            ngrams.add(st.substring(i, i + 2));
-                            bw.write(st.substring(i, i + 2));
-                            bw.newLine();
+                            ngrams2.add(st.substring(i, i + 2));
+                    }
+                    //create 3-gram
+                    for (int i = 0; i < st.length() - 3 + 1; i++) {
+                        ngrams3.add(st.substring(i, i + 3));
                     }
                 }
-            } catch (IOException e) {
+                //pass n-gram to write on two different file
+                master.write2gram(ngrams2);
+                master.write3gram(ngrams3);
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }
