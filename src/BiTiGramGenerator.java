@@ -6,10 +6,12 @@ public class BiTiGramGenerator {
 
             String input = args[0];
             String output = args[1];
+            int a = Runtime.getRuntime().availableProcessors();
+            System.out.println(a);
 
             Master master = new Master(input, output);
             //TODO fare tanti thread quanti sono i core del processore
-            Worker[] workers = new Worker[8];
+            Worker[] workers = new Worker[a];
 
             for (int i = 0; i < 8; i++) {
                 workers[i] = new Worker(master,input);
@@ -19,7 +21,7 @@ public class BiTiGramGenerator {
                 workers[i].join();
             }
             long endTime = System.nanoTime();
-            long totalTime = endTime - starTime;
+            long totalTime = (endTime - starTime)/1000000000;
             System.out.println(totalTime);
         }
     }

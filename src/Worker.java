@@ -15,32 +15,39 @@ public class Worker extends Thread{
     }
 
     public void run() {
-        while (master.isBookavaible()) {
-            try{
-                Integer bookId = master.giveBookId();
-                File file = new File(input + "/"+ bookId);
-                BufferedReader br = new BufferedReader(new FileReader(file));
-                String st;
-                ArrayList<String> ngrams2 = new ArrayList<String>();
-                ArrayList<String> ngrams3 = new ArrayList<String>();
+            while (master.isBookavaible()) {
+                try {
+                    Integer bookId[] = master.giveBookId();
+                    ArrayList<String> ngrams2 = new ArrayList<String>();
+                    ArrayList<String> ngrams3 = new ArrayList<String>();
+                    for(int h=0;h<3;h++) {
+                        if(bookId[h]==null){
+                            break;
+                        }
+                        File file = new File(input + "/" + bookId[h].toString());
+                        BufferedReader br = new BufferedReader(new FileReader(file));
+                        String st;
 
-                while ((st = br.readLine()) != null) {
-                    st = st.replace(" ", "");
-                    //create 2-gram
-                        for (int i = 0; i < st.length() - 2 + 1; i++) {
-                            ngrams2.add(st.substring(i, i + 2));
+                        while ((st = br.readLine()) != null) {
+                            st = st.replace(" ", "");
+                            //create 2-gram
+                            for (int i = 0; i < st.length() - 2 + 1; i++) {
+                                ngrams2.add(st.substring(i, i + 2));
+                            }
+                            //create 3-gram
+                            for (int i = 0; i < st.length() - 3 + 1; i++) {
+                                ngrams3.add(st.substring(i, i + 3));
+                            }
+                        }
+
                     }
-                    //create 3-gram
-                    for (int i = 0; i < st.length() - 3 + 1; i++) {
-                        ngrams3.add(st.substring(i, i + 3));
-                    }
+                    //pass n-gram to write on two different file
+                    master.write2gram(ngrams2);
+                    master.write3gram(ngrams3);
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
-                //pass n-gram to write on two different file
-                master.write2gram(ngrams2);
-                master.write3gram(ngrams3);
-            } catch (Exception e) {
-                e.printStackTrace();
             }
-        }
+
     }
 }

@@ -44,15 +44,26 @@ public class Master{
         if (counter == 1)
            return false;
         else
-               //System.out.println("uscito");
          return true;
     }
 
-    public synchronized Integer giveBookId()  {
-        counter --;
-        Integer bookId = (int) counter;
-        //System.out.println(counter);
-        return bookId;
+    public synchronized Integer[] giveBookId()  {
+
+        Integer[] booksId=new Integer[10];
+        if(counter > 3) {
+            for(int k=0;k<3;k++) {
+                booksId[k] = new Integer((int)counter);
+                counter--;
+            }
+        }
+        else{
+            while(counter!=0){
+                booksId[(int)counter] = new Integer((int)counter);
+                counter--;
+            }
+        }
+
+        return booksId;
     }
 
     //write 2-gram
