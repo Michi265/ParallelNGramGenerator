@@ -5,13 +5,13 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.stream.Stream;
-import java.util.zip.CheckedOutputStream;
 
-public class Master {
+public class Master{
 
     private long counter = 1;
+    private String input;
+    private String output;
     File fileOut2;
     FileWriter fw2;
     BufferedWriter bw2;
@@ -21,17 +21,18 @@ public class Master {
     BufferedWriter bw3;
 
 
-    public Master(){
+    public Master(String input, String output){
+        this.input=input;
+        this.output=output;
         try {
-            Stream<Path> files = Files.list(Paths.get("/home/caste/Scrivania/ParallelNGramGenerator/books/www.gutenberg.org/robot")); //return the number of books
-            //Stream<Path> files = Files.list(Paths.get("/home/Scrivania/ParallelNGramGenerator/prova"));
+            Stream<Path> files = Files.list(Paths.get(input)); //return the number of books
             this.counter = files.count();
 
-            this.fileOut2 = new File("/home/caste/Scrivania/ParallelNGramGenerator/output2");
+            this.fileOut2 = new File(output+"/output2Parallel");
             this.fw2 = new FileWriter(this.fileOut2);
             this.bw2 = new BufferedWriter(this.fw2);
 
-            this.fileOut3 = new File("/home/caste/Scrivania/ParallelNGramGenerator/output3");
+            this.fileOut3 = new File(output+"/output3Parallel");
             this.fw3 = new FileWriter(this.fileOut3);
             this.bw3 = new BufferedWriter(this.fw3);
         }catch (Exception e){
@@ -58,41 +59,27 @@ public class Master {
 
     public synchronized void write2gram(ArrayList<String> ngrams2) throws Exception{
 
-        //try {
             int j=1;
             for (int i=0; i < ngrams2.size();i++){
                 bw2.write(ngrams2.get(i)+",");
-                //bw.write(" ");
                 if(j%60==0) {
                     bw2.newLine();
                 }
                 j++;
-                //bw.write(System.getProperty( "line.separator" ));
             }
-
-
-        //}catch (Exception e){}
-
     }
 
     //write 3-gram
 
     public synchronized void write3gram(ArrayList<String> ngrams3) throws Exception{
 
-        //try {
             int j=1;
             for (int i=0; i < ngrams3.size();i++){
                 this.bw3.write(ngrams3.get(i)+",");
-                //bw.write(" ");
                 if(j%40==0) {
                     bw3.newLine();
                 }
                 j++;
             }
-
-
-      //  }catch (Exception e){}
     }
-
-
 }
