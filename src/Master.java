@@ -37,7 +37,7 @@ public class Master{
 
     //Verifica se ci sono ancora file da processare
     public synchronized boolean isBookavaible() {
-        if (counter == 1)
+        if (counter <= 0)
             return false;
         else
             return true;
@@ -54,7 +54,7 @@ public class Master{
             }
         }
         else{
-            while(counter!=0){
+            while(counter>0){
                 booksId[(int)counter] = new Integer((int)counter);
                 counter--;
             }
@@ -65,15 +65,8 @@ public class Master{
     //Scrive 2-gram processati da 1 worker nel file di output
     public synchronized void write2gram(String ngrams2) throws Exception{
         long starTime = System.nanoTime();
-        //int j=1;
-        //for (String s : ngrams2) {
         this.bw2.write(ngrams2);
-        //ogni 60 bi grammi va a capo
-            //if (j % 60 == 0) {
         bw2.newLine();
-            //}
-            //j++;
-        //}
         long endTime = System.nanoTime();
         long totalTime = (endTime - starTime);
         bigramWriteTime += totalTime;
@@ -82,15 +75,8 @@ public class Master{
     //Scrivi 3-gram
     public synchronized void write3gram(String ngrams3) throws Exception{
         long starTime = System.nanoTime();
-        //int j=1;
-        //for (String s : ngrams3) {
         this.bw3.write(ngrams3);
-            //ogni 40 bi grammi va a capo
-            //if (j % 40 == 0) {
         bw3.newLine();
-            //}
-            //j++;
-        //}
         long endTime = System.nanoTime();
         long totalTime = (endTime - starTime);
         trigramWriteTime += totalTime;

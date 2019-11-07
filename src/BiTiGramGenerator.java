@@ -6,14 +6,18 @@ public class BiTiGramGenerator {
 
             String input = args[0];
             String output = args[1];
+            int filesPerIterations = args[2];
             int a = Runtime.getRuntime().availableProcessors();
-            //System.out.println(a);
+            System.out.println("Available cores number: " + a);
+        	System.out.println("Input Database location: " + input);
+        	System.out.println("Output location: " + input);
+
 
             Master master = new Master(input, output);
             Worker[] workers = new Worker[a];
 
             for (int i = 0; i <a; i++) {
-                workers[i] = new Worker(master,input,1);
+                workers[i] = new Worker(master,input,filesPerIterations);
                 workers[i].start();
             }
             for (int i = 0; i <a; i++) {
