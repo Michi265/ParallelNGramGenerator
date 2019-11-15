@@ -6,12 +6,12 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.stream.Stream;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class Master{
 
-    private long counter = 1;
-    public long bigramWriteTime;
-    public long trigramWriteTime;
+    private AtomicInteger counter;
+    //private int counter = 0;
     private BufferedWriter bw2;
     private BufferedWriter bw3;
 
@@ -20,7 +20,9 @@ public class Master{
 
             //Acquisizione numero file
             Stream<Path> files = Files.list(Paths.get(input));
-            this.counter = files.count();
+            int tmp= (int)files.count();
+            this.counter = new AtomicInteger(tmp);
+            //this.counter = (int)files.count();
 
             //Inizializzazione buffer scrittura
             File fileOut2 = new File(output + "/output2Parallel");
@@ -36,27 +38,29 @@ public class Master{
     }
 
     //Verifica se ci sono ancora file da processare
-    public synchronized boolean isBookavaible() {
-        if (counter <= 0)
+    public boolean isBookavaible() {
+        if (counter.get() == 0)
             return false;
         else
             return true;
     }
 
     //Restituisce id del libro/i da processare
-    public synchronized Integer[] giveBookId(int p)  {
+    public Integer[] giveBookId(int p)  {
 
         Integer[] booksId=new Integer[p];
-        if(counter > p) {
+        if(counter.get() >= p) {
             for(int k=0;k<p;k++) {
-                booksId[k] = new Integer((int)counter);
-                counter--;
+                booksId[k] = new Integer(counter.get());
+                counter.getAndDecrement();
             }
         }
         else{
-            while(counter>0){
-                booksId[(int)counter] = new Integer((int)counter);
-                counter--;
+            int k=0;
+            while(counter.get()>0){
+                booksId[k] = new Integer(counter.get());
+                counter.getAndDecrement();;
+                k++;
             }
         }
         return booksId;
@@ -64,21 +68,13 @@ public class Master{
 
     //Scrive 2-gram processati da 1 worker nel file di output
     public synchronized void write2gram(String ngrams2) throws Exception{
-        long starTime = System.nanoTime();
         this.bw2.write(ngrams2);
         bw2.newLine();
-        long endTime = System.nanoTime();
-        long totalTime = (endTime - starTime);
-        bigramWriteTime += totalTime;
     }
 
     //Scrivi 3-gram
     public synchronized void write3gram(String ngrams3) throws Exception{
-        long starTime = System.nanoTime();
         this.bw3.write(ngrams3);
         bw3.newLine();
-        long endTime = System.nanoTime();
-        long totalTime = (endTime - starTime);
-        trigramWriteTime += totalTime;
     }
 }
